@@ -1,11 +1,12 @@
-import React from "react";
+import React, { Fragment } from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
-import "./index.css";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import { pink, blue } from "@material-ui/core/colors";
 import * as serviceWorker from "./serviceWorker";
+import "./axios.config";
+import App from "./App";
+import "./index.css";
 
 // 自定义主题
 const theme = createMuiTheme({
@@ -16,12 +17,12 @@ const theme = createMuiTheme({
 });
 
 ReactDOM.render(
-  <React.Fragment>
+  <Fragment>
     <CssBaseline />
     <MuiThemeProvider theme={theme}>
       <App />
     </MuiThemeProvider>
-  </React.Fragment>,
+  </Fragment>,
   document.getElementById("root")
 );
 

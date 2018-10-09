@@ -10,17 +10,17 @@ class Tabbars extends Component {
     isShowTabbar: true,
     tabs: [
       {
-        label: "home",
+        label: "首页",
         to: "/home",
         icon: "home"
       },
       {
-        label: "about",
+        label: "关于",
         icon: "supervised_user_circle",
         to: "/about"
       },
       {
-        label: "mine",
+        label: "我的",
         icon: "perm_identity",
         to: "/mine"
       }
@@ -37,11 +37,7 @@ class Tabbars extends Component {
   componentWillMount() {
     // l(this.props)
     let { location, history } = this.props;
-    if(location.pathname.includes('login') ){
-      this.setState({
-        isShowTabbar: false
-      })
-    }
+
     // 确保用户在浏览器改变路由，激活按钮发生变化
     this.changeTabbarValue(location.pathname);
 
@@ -56,6 +52,9 @@ class Tabbars extends Component {
   changeTabbarValue(pathname) {
     let i = this.state.tabs.findIndex(({ to }) => to.includes(pathname));
     if (i < 0) {
+      this.setState({
+        value: -1
+      });
       return l("没找到根路由");
     }
     i !== this.state.value &&
@@ -69,30 +68,28 @@ class Tabbars extends Component {
   }
 
   render() {
-    let { isShowTabbar } = this.state;
     return (
-      isShowTabbar && (
-        <AppBar position="static" color="default">
-          <Tabs
-            value={this.state.value}
-            onChange={this.handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            fullWidth
-          >
-            {this.state.tabs.map(($_, index) => {
-              return (
-                <Tab
-                  label={$_.label}
-                  key={index}
-                  onClick={this.toNav($_.to)}
-                  icon={<Icon>{$_.icon}</Icon>}
-                />
-              );
-            })}
-          </Tabs>
-        </AppBar>
-      )
+      <AppBar position="static" color="default">
+        <Tabs
+          value={this.state.value}
+          onChange={this.handleChange}
+          indicatorColor="primary"
+          textColor="primary"
+          fullWidth
+        >
+          {this.state.tabs.map(($_, index) => {
+            let { label, to, icon} = $_
+            return (
+              <Tab
+                label={label}
+                key={index}
+                onClick={this.toNav(to)}
+                icon={<Icon>{icon}</Icon>}
+              />
+            );
+          })}
+        </Tabs>
+      </AppBar>
     );
   }
 }

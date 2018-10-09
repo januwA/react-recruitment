@@ -1,81 +1,53 @@
 import React, { Component, Fragment } from "react";
-import {
-  AppBar,
-  Button,
-  Tabs,
-  Tab,
-  Icon,
-  Typography,
-  Fade,
-  Slide
-} from "@material-ui/core";
+import { BrowserRouter, Redirect, Route, Switch, withRouter } from "react-router-dom";
+import { LinearProgress, Fade } from "@material-ui/core";
 import _ from "lodash";
-import {
-  BrowserRouter,
-  HashRouter,
-  Link,
-  Redirect,
-  Route,
-  Switch,
-  withRouter
-} from "react-router-dom";
-import Tabbars from './components/tabbar'
+import store from "@/store";
+import { observer } from "mobx-react";
+import routers from "./routers";
+import Tabbars from "./components/tabbar";
+import GlobalProgress from '@/components/progress'
+import AuthRoute from '@/components/authRoute'
 
 const l = console.log;
-
-let Home = props => {
-  return (
-    <Fragment>
-      <Typography variant="headline">首页</Typography>
-    </Fragment>
-  );
-};
-let About = props => {
-  return (
-    <Fragment>
-      <Typography variant="headline">关于</Typography>
-    </Fragment>
-  );
-};
-
-let Mine = props => {
-  return (
-    <Fragment>
-      <Typography variant="headline">我的</Typography>
-    </Fragment>
-  );
-};
-let Login = props => {
-  return (
-    <Fragment>
-      <Typography variant="headline">login</Typography>
-    </Fragment>
-  );
-};
-
+@observer
 class App extends Component {
+  componentWillMount(){
+  }
   render() {
     return (
       <BrowserRouter>
         <Fragment>
-          <Tabbars />
+          <GlobalProgress />
+          <AuthRoute />
+          {/* <Tabbars /> */}
           <Switch>
-            <Redirect from="/" to="/home" exact strict />
-            <Route
-              exact
-              strict
-              path="/home"
-              render={props => <Home {...props} />}
-            />
-            <Route path="/about" component={About} />
-            <Route path="/mine" component={Mine} />
-            <Route path="/login" component={Login} />
+            {routers.map((route, index) => {
+              // 404
+              if (route.path === "**") {
+                return (
+                  <Route
+                    component={() => route.component || route.render}
+                    key={index}
+                  />
+                );
+              }
 
-            <Route
-              render={() => {
-                return <div>404</div>;
-              }}
-            />
+              // redirect
+              if (route.redirectTo) {
+                return (
+                  <Redirect
+                    from={route.path}
+                    to={route.redirectTo}
+                    exact
+                    strict
+                    key={index}
+                  />
+                );
+              }
+
+              return <Route exact {...route} key={index} />;
+            })}
           </Switch>
         </Fragment>
       </BrowserRouter>

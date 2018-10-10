@@ -10,13 +10,19 @@ import {
   FormControlLabel,
   RadioGroup,
   Radio,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
+import { observer } from "mobx-react";
+import { Link, Redirect } from "react-router-dom";
+import UserStore from "@/store/user.store";
 
 const l = console.log;
-
 const styles = theme => ({
   submit: {
     marginTop: theme.spacing.unit * 2
@@ -24,6 +30,7 @@ const styles = theme => ({
 });
 
 @withStyles(styles)
+@observer
 class Registered extends Component {
   state = {
     type: "jobSeeker", // or enterprise
@@ -37,6 +44,7 @@ class Registered extends Component {
     const { classes: cs } = this.props;
     return (
       <Fragment>
+        {UserStore.redirectTo && <Redirect to={UserStore.redirectTo} />}
         <Logo />
         <List component="nav">
           <ListItem dense>
@@ -52,7 +60,7 @@ class Registered extends Component {
           <ListItem dense>
             <TextField
               label="密码"
-              type='password'
+              type="password"
               value={pwd}
               onChange={this.handleChange("pwd")}
               fullWidth
@@ -62,7 +70,7 @@ class Registered extends Component {
           <ListItem dense>
             <TextField
               label="确认密码"
-              type='password'
+              type="password"
               value={repeatpwd}
               onChange={this.handleChange("repeatpwd")}
               fullWidth
@@ -100,6 +108,17 @@ class Registered extends Component {
             </Button>
           </Grid>
         </Grid>
+        <Dialog open={UserStore.errMsg !== ""} onClose={this.handleClose}>
+          <DialogTitle>警告</DialogTitle>
+          <DialogContent>
+            <DialogContentText>{UserStore.errMsg}</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary" autoFocus>
+              确定
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Fragment>
     );
   }
@@ -124,11 +143,20 @@ class Registered extends Component {
    * 注册按钮
    */
   handleRegistered = () => {
-    l(this.state)
+    let { user, pwd, repeatpwd, type } = this.state;
+    UserStore.regisger({ user, pwd, repeatpwd, type });
   };
 
-  componentDidMount(){
-    document.title = '欢迎注册~~'
+  /**
+   * 清除错误消息
+   */
+  handleClose = () => (UserStore.errMsg = "");
+
+  componentDidMount() {
+    document.title = "欢迎注册~~";
+  }
+  componentWillMount() {
+    // UserStore.errMsg = "";
   }
 }
 

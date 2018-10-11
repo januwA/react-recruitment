@@ -16,6 +16,7 @@ import {
 import { Link, Redirect } from "react-router-dom";
 import UserStore from "@/store/user.store";
 import { observer } from "mobx-react";
+import ErrorAlter from "@/components/errorAlter";
 
 @observer
 class Login extends Component {
@@ -48,6 +49,7 @@ class Login extends Component {
               onChange={this.handleChange("pwd")}
               fullWidth
               margin="dense"
+              type='password'
             />
           </ListItem>
         </List>
@@ -57,8 +59,8 @@ class Login extends Component {
               color="primary"
               variant="contained"
               fullWidth
-              onClick={UserStore.login(this.state)}
-            >
+              variant='contained'
+              onClick={UserStore.login(this.state)}>
               登陆
             </Button>
           </Grid>
@@ -67,24 +69,15 @@ class Login extends Component {
               color="secondary"
               variant="contained"
               fullWidth
-              component={props => <Link to="/registered" {...props} />}
-            >
+              component={props => <Link to="/registered" {...props} />}>
               注册
             </Button>
           </Grid>
         </Grid>
-
-        <Dialog open={UserStore.errMsg !== ""} onClose={this.handleClose}>
-          <DialogTitle>警告</DialogTitle>
-          <DialogContent>
-            <DialogContentText>{UserStore.errMsg}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary" autoFocus>
-              确定
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <ErrorAlter
+          msg={UserStore.errMsg}
+          onClose={this.handleClose}
+        />
       </Fragment>
     );
   }
@@ -103,7 +96,7 @@ class Login extends Component {
    */
   handleClose = () => (UserStore.errMsg = "");
 
-  componentWillMount(){
+  componentWillMount() {
     // UserStore.errMsg = ''
   }
 }

@@ -21,6 +21,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { observer } from "mobx-react";
 import { Link, Redirect } from "react-router-dom";
 import UserStore from "@/store/user.store";
+import ErrorAlter from "@/components/errorAlter";
 
 const l = console.log;
 const styles = theme => ({
@@ -108,17 +109,10 @@ class Registered extends Component {
             </Button>
           </Grid>
         </Grid>
-        <Dialog open={UserStore.errMsg !== ""} onClose={this.handleClose}>
-          <DialogTitle>警告</DialogTitle>
-          <DialogContent>
-            <DialogContentText>{UserStore.errMsg}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary" autoFocus>
-              确定
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <ErrorAlter
+          msg={UserStore.errMsg}
+          onClose={this.handleClose}
+        />
       </Fragment>
     );
   }

@@ -1,6 +1,8 @@
-import { observable, action, computed, set } from "mobx";
+import { observable, action, computed, set, toJS } from "mobx";
 import axios from "axios";
 import { getRedirectPath } from "@/util";
+import { api } from "@/api";
+import { userInfo } from "os";
 
 const l = console.log;
 class UserStore {
@@ -25,9 +27,12 @@ class UserStore {
   @observable
   type = "";
 
+  @observable
+  _id = "";
+
   /**
    * 用户注册
-   * @param {*} param0 
+   * @param {*} param0
    */
   @action.bound
   async regisger({ user, pwd, repeatpwd, type }) {
@@ -41,21 +46,22 @@ class UserStore {
     }
     let r;
     try {
-      r = await axios.post("/user/register", { user, pwd, type });
+      r = await axios.post(api.userRegister, { user, pwd, type });
       // l(r);
       if (r.code === 0) {
         // 注册成功
-        set(this,{
+        set(this, {
+          errMsg: "",
           isAuth: true,
-          redirectTo: getRedirectPath({type})
-        })
+          redirectTo: getRedirectPath({ type })
+        });
       } else {
         this.errMsg = r.msg;
-        this.isAuth = false
+        this.isAuth = false;
       }
     } catch (error) {
       this.errMsg = String(error);
-      this.isAuth = false
+      this.isAuth = false;
     }
   }
 
@@ -63,25 +69,31 @@ class UserStore {
    * 用户登陆
    */
   @action.bound
-  login = ({user, pwd}) => async (e) => {
-    user = user.trim()
-    pwd = pwd.trim()
+  login = ({ user, pwd }) => async e => {
+    user = user.trim();
+    pwd = pwd.trim();
     try {
-      let r = await axios.post('/user/login',{user, pwd})
+      let r = await axios.post(api.userLogin, { user, pwd });
       // l(r)
-      if(r.code === 0){
+      if (r.code === 0) {
         // 登陆成功
+        this.errMsg = "";
         this.isAuth = true;
-        this.redirectTo = getRedirectPath(r.data)
-      }else{
+        this.redirectTo = getRedirectPath(r.data);
+      } else {
         this.errMsg = r.msg;
-        this.isAuth = false
+        this.isAuth = false;
       }
     } catch (error) {
       this.errMsg = String(error);
-      this.isAuth = false
+      this.isAuth = false;
     }
+  };
 
+  @action.bound
+  saveUserInfo(userInfo) {
+    l(userInfo);
+    set(this, {...userInfo});
   }
 }
 

@@ -7,13 +7,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('info')
-  info() {
-    return this.userService.info();
+  info(@Request() req) {
+    return this.userService.info(req);
   }
 
   @Post('register')
-  register(@Body() body) {
-    return this.userService.register(body);
+  register(@Body() body, @Response() res) {
+    return this.userService.register(res, body);
   }
 
   @Post('login')

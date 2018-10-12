@@ -12,16 +12,26 @@ import {
   ListItem,
   ListItemText,
   TextField,
-  Paper
+  Paper,
+  Grid,
+  Button
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import ATitle from "../components/atitle";
 import AvatarUpload from "../components/avatarUpload";
+import { Redirect } from "react-router-dom";
+import userStore from "../store/user.store";
 
 const styles = theme => ({
+  root: {
+    height: "1vh"
+  },
   flexGrow1: {
     flexGrow: 1,
     textAlign: "center"
+  },
+  block: {
+    marginTop: "3rem"
   }
 });
 const l = console.log;
@@ -29,6 +39,7 @@ const l = console.log;
 @withStyles(styles)
 class EnterpriseInfo extends Component {
   state = {
+    avatar: "",
     title: "",
     company: "",
     money: "",
@@ -39,10 +50,11 @@ class EnterpriseInfo extends Component {
     const { title, company, money, desc } = this.state;
     return (
       <Fragment>
-        <Paper>
+        {userStore.redirectTo && <Redirect to={userStore.redirectTo} />}
+        <Paper className={cs.root}>
           <ATitle>企业完善信息页面</ATitle>
-          <AvatarUpload />
-
+          <div className={cs.block} />
+          <AvatarUpload onChange={this.handleAvatar} />
           <List component="nav">
             <ListItem>
               <TextField
@@ -86,14 +98,26 @@ class EnterpriseInfo extends Component {
                 }}
               />
             </ListItem>
+            <ListItem>
+              <Grid container justify="center">
+                <Grid item xs={10}>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    fullWidth
+                    onClick={userStore.update(this.state)}>
+                    保存数据
+                  </Button>
+                </Grid>
+              </Grid>
+            </ListItem>
           </List>
         </Paper>
       </Fragment>
     );
   }
 
-  handleChange = k => e => {
-    this.setState({ [k]: e.target.value });
-  };
+  handleChange = k => e => this.setState({ [k]: e.target.value });
+  handleAvatar = avatar => this.setState({ avatar });
 }
 export default EnterpriseInfo;

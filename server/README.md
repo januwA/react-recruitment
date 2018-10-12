@@ -25,3 +25,10 @@ yarn add md5
 ```
 yarn add cookie-parser
 ```
+
+## 设置静态文件，虚拟路径
+```
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/static/',
+  });
+```

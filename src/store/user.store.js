@@ -1,8 +1,7 @@
 import { observable, action, computed, set, toJS } from "mobx";
 import axios from "axios";
-import { getRedirectPath } from "@/util";
+import { getRedirectPath } from "../util";
 import { api } from "@/api";
-import { userInfo } from "os";
 
 const l = console.log;
 class UserStore {
@@ -19,17 +18,7 @@ class UserStore {
 
   // 用户信息
   @observable
-  user = "";
-
-  @observable
-  pwd = "";
-
-  @observable
-  type = "";
-
-  @observable
-  _id = "";
-
+  userinfo = {};
   /**
    * 用户注册
    * @param {*} param0
@@ -56,12 +45,10 @@ class UserStore {
           redirectTo: getRedirectPath({ type })
         });
       } else {
-        this.errMsg = r.msg;
-        this.isAuth = false;
+        this._error(r.msg);
       }
     } catch (error) {
-      this.errMsg = String(error);
-      this.isAuth = false;
+      this._error(String(error));
     }
   }
 
@@ -80,20 +67,45 @@ class UserStore {
         this.errMsg = "";
         this.isAuth = true;
         this.redirectTo = getRedirectPath(r.data);
+        this.userinfo = r.data;
       } else {
-        this.errMsg = r.msg;
-        this.isAuth = false;
+        this._error(r.msg);
       }
     } catch (error) {
-      this.errMsg = String(error);
-      this.isAuth = false;
+      this._error(String(error));
     }
   };
 
   @action.bound
-  saveUserInfo(userInfo) {
-    l(userInfo);
-    set(this, {...userInfo});
+  saveUserInfo(userinfo) {
+    this.userinfo = userinfo;
+  }
+
+  /**
+   * * 用户完善信息
+   * @param {avatar,title,company,money,decs} data 企业完善的信息资料
+   */
+  @action.bound
+  update = data => async e => {
+    let sd = new FormData();
+    for (let k in data) {
+      sd.append(k, data[k]);
+    }
+    try {
+      let r = await axios.post(api.update, sd);
+      if (r.code === 0) {
+        this.userinfo = r.data;
+      } else {
+        this.errMsg = r.msg;
+      }
+    } catch (error) {
+      this.errMsg = String(error);
+    }
+  };
+
+  _error(msg) {
+    this.errMsg = msg;
+    this.isAuth = false;
   }
 }
 

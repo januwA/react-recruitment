@@ -14,7 +14,7 @@ import {
   DialogTitle
 } from "@material-ui/core";
 import { Link, Redirect } from "react-router-dom";
-import UserStore from "@/store/user.store";
+import userStore from "@/store/user.store";
 import { observer } from "mobx-react";
 import ErrorAlter from "@/components/errorAlter";
 
@@ -29,7 +29,7 @@ class Login extends Component {
     const { user, pwd } = this.state;
     return (
       <Fragment>
-        {UserStore.redirectTo && <Redirect to={UserStore.redirectTo} />}
+        {userStore.redirectTo && <Redirect to={userStore.redirectTo} />}
         <Logo />
         <List component="nav">
           <ListItem>
@@ -60,7 +60,7 @@ class Login extends Component {
               variant="contained"
               fullWidth
               variant='contained'
-              onClick={UserStore.login(this.state)}>
+              onClick={userStore.login(this.state)}>
               登陆
             </Button>
           </Grid>
@@ -75,7 +75,7 @@ class Login extends Component {
           </Grid>
         </Grid>
         <ErrorAlter
-          msg={UserStore.errMsg}
+          msg={userStore.errMsg}
           onClose={this.handleClose}
         />
       </Fragment>
@@ -94,7 +94,7 @@ class Login extends Component {
   /**
    * 清除错误消息
    */
-  handleClose = () => (UserStore.errMsg = "");
+  handleClose = () => (userStore.errMsg = "");
 
   componentWillMount() {
     // UserStore.errMsg = ''

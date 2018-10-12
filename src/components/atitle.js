@@ -16,7 +16,7 @@ class ATitle extends Component {
     const { classes: cs, children } = this.props;
     return (
       <Fragment>
-        <AppBar position="static" color="primary">
+        <AppBar position="fixed" color="primary">
           <Toolbar>
             <Typography
               variant="title"

@@ -40,7 +40,12 @@ class AvatarUpload extends Component {
               src={avatarData}
               className={cs.img}
             />
-            <Typography>点击上传头像</Typography>
+            <Typography>
+              {" "}
+              点击
+              {avatarData ? "更换" : "上传"}
+              头像160x160
+            </Typography>
             <input
               name="file"
               type="file"
@@ -54,14 +59,22 @@ class AvatarUpload extends Component {
     );
   }
 
-  handleUploadAvatar = (e) => {
+  handleUploadAvatar = e => {
     let files = e.target.files;
     if (files.length === 0) return;
     let file = files[0];
-
+    this.props.onChange(file);
     this.setState({
-      avatarData: window.URL.createObjectURL(file)
+      avatarData: URL.createObjectURL(file)
     });
+  };
+
+  shouldComponentUpdate(newProps, newState) {
+    // state 被改变
+    // return true 组件刷新
+    // return false  组件不用刷新，继续运行
+    URL.revokeObjectURL(this.state.avatarData)
+    return true;
   }
 }
 

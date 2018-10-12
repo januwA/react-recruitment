@@ -22,7 +22,6 @@ class AuthRoute extends Component {
 
     // 获取用户信息
     let r = await axios.get(api.userInfo);
-    // l(r)
     // 是否登陆
     if (r.code === 0) {
       // 有登陆信息

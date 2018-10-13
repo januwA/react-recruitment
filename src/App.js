@@ -28,16 +28,6 @@ class App extends Component {
           {/* <Tabbars /> */}
           <Switch>
             {routers.map((route, index) => {
-              // 404
-              if (route.path === "**") {
-                return (
-                  <Route
-                    component={() => route.component || route.render}
-                    key={index}
-                  />
-                );
-              }
-
               // redirect
               if (route.redirectTo) {
                 return (
@@ -53,6 +43,7 @@ class App extends Component {
 
               return <Route exact {...route} key={index} />;
             })}
+            <Route component={() => <div> 404 </div> }/>
           </Switch>
         </Fragment>
       </BrowserRouter>

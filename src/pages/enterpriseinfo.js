@@ -21,6 +21,7 @@ import ATitle from "../components/atitle";
 import AvatarUpload from "../components/avatarUpload";
 import { Redirect } from "react-router-dom";
 import userStore from "../store/user.store";
+import { observer } from "mobx-react";
 
 const styles = theme => ({
   root: {
@@ -37,6 +38,7 @@ const styles = theme => ({
 const l = console.log;
 
 @withStyles(styles)
+@observer
 class EnterpriseInfo extends Component {
   state = {
     avatar: "",
@@ -46,11 +48,13 @@ class EnterpriseInfo extends Component {
     desc: ""
   };
   render() {
-    const { classes: cs } = this.props;
+    const { classes: cs, location } = this.props;
     const { title, company, money, desc } = this.state;
+    const isDirect =
+      userStore.redirectTo && userStore.redirectTo !== location.pathname;
     return (
       <Fragment>
-        {userStore.redirectTo && <Redirect to={userStore.redirectTo} />}
+        {isDirect && <Redirect to={userStore.redirectTo} />}
         <Paper className={cs.root}>
           <ATitle>企业完善信息页面</ATitle>
           <div className={cs.block} />

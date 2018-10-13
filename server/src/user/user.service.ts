@@ -28,7 +28,8 @@ export class UserService {
         data: r,
         msg: 'ok',
       };
-    } catch (error) {
+    } catch (error)     // The number of spaces a tab is considered equal to
+{
       return {
         code: 1,
         msg: String(error),
@@ -36,6 +37,11 @@ export class UserService {
     }
   }
 
+  /**
+   * 用户注册
+   * @param res 
+   * @param param1 
+   */
   async register(res, { user, pwd, type }) {
     let r = await this.userModel.findOne({ user });
     if (r) {
@@ -56,6 +62,11 @@ export class UserService {
     }
   }
 
+  /**
+   * 用户登陆
+   * @param res 
+   * @param param1 
+   */
   async login(res, { user, pwd }) {
     let r = await this.userModel.findOne(
       { user, pwd: this._pwdMd5(pwd) },
@@ -75,13 +86,20 @@ export class UserService {
     }
   }
 
+  /**
+   * 资料完善
+   * @param req 
+   * @param res 
+   * @param avatarBf 
+   * @param body 
+   */
   async update(req, res, avatarBf, body) {
     let userid = req.cookies.userid;
     if (!userid) {
       return res.json({ code: 1 });
     }
 
-    let fileName = Date.now().toString(16) + '_' + avatarBf.originalname;
+    let fileName = Date.now() + '_' + avatarBf.originalname;
     const savePath = path.join(__dirname, '..', '..', 'uploads', fileName);
     const exists = await fs.pathExists(savePath);
     if (exists) {

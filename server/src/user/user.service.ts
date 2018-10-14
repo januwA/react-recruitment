@@ -100,6 +100,7 @@ export class UserService {
     }
 
     let fileName = Date.now() + '_' + avatarBf.originalname;
+    l(fileName)
     const savePath = path.join(__dirname, '..', '..', 'uploads', fileName);
     const exists = await fs.pathExists(savePath);
     if (exists) {

@@ -1,10 +1,20 @@
-
-
 .ajanuw {
   border-radius: 50%;
 }
 
+.fixed-header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
 
+.fixed-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
 
 /* Rules for sizing the icon. 字体图标大小， 默认24px*/
 .material-icons.md-18 {

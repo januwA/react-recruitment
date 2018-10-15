@@ -28,8 +28,7 @@ export class UserService {
         data: r,
         msg: 'ok',
       };
-    } catch (error)     // The number of spaces a tab is considered equal to
-{
+    } catch (error) { // The number of spaces a tab is considered equal to
       return {
         code: 1,
         msg: String(error),
@@ -39,8 +38,8 @@ export class UserService {
 
   /**
    * 用户注册
-   * @param res 
-   * @param param1 
+   * @param res
+   * @param param1
    */
   async register(res, { user, pwd, type }) {
     let r = await this.userModel.findOne({ user });
@@ -64,8 +63,8 @@ export class UserService {
 
   /**
    * 用户登陆
-   * @param res 
-   * @param param1 
+   * @param res
+   * @param param1
    */
   async login(res, { user, pwd }) {
     let r = await this.userModel.findOne(
@@ -88,10 +87,10 @@ export class UserService {
 
   /**
    * 资料完善
-   * @param req 
-   * @param res 
-   * @param avatarBf 
-   * @param body 
+   * @param req
+   * @param res
+   * @param avatarBf
+   * @param body
    */
   async update(req, res, avatarBf, body) {
     let userid = req.cookies.userid;
@@ -100,7 +99,7 @@ export class UserService {
     }
 
     let fileName = Date.now() + '_' + avatarBf.originalname;
-    l(fileName)
+    l(fileName);
     const savePath = path.join(__dirname, '..', '..', 'uploads', fileName);
     const exists = await fs.pathExists(savePath);
     if (exists) {
@@ -115,7 +114,7 @@ export class UserService {
       await fs.outputFile(savePath, avatarBf.buffer);
 
       // 拼接一个网络路径 localhost:5000/static/avatar.png
-      const showPath = `${req.headers.host}/static/${fileName}`;
+      const showPath = `http://${req.headers.host}/static/${fileName}`;
       body.avatar = showPath;
 
       let r = await this.userModel.updateOne(
@@ -143,6 +142,21 @@ export class UserService {
         code: 1,
         msg: String(err),
       });
+    }
+  }
+
+  async list(query) {
+    let { type } = query;
+    // 获取type相等，并且上传了头像的用户
+    let r = await this.userModel.find({
+      type,
+      avatar: {
+        $ne: null
+      }
+    }, _filter);
+    return {
+      code: 0,
+      data: r
     }
   }
 

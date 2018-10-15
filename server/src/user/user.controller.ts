@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Response, Request, UseInterceptors, FileFieldsInterceptor, FileInterceptor, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Response, Request, UseInterceptors, FileFieldsInterceptor, FileInterceptor, UploadedFile, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 
 const l = console.log;
@@ -26,5 +26,10 @@ export class UserController {
   update(@UploadedFile() avatarBf, @Body() body, @Request() req, @Response() res){
     // {fieldname, originalname, mimetype, buffer}avatarBr
     return this.userService.update(req, res, avatarBf, body)
+  }
+
+  @Get('list')
+  list(@Query() query){
+    return this.userService.list(query)
   }
 }

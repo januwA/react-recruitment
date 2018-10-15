@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 
 const styles = theme => ({
   flexGrow1: {
@@ -30,4 +31,8 @@ class ATitle extends Component {
     );
   }
 }
+
+ATitle.PropTypes = {
+  children: PropTypes.node.isRequired
+};
 export default ATitle;

@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { Avatar, Typography, Grid } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
+import PropTypes from 'prop-types';
 
 const l = console.log;
 const styles = theme => ({

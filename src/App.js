@@ -10,10 +10,13 @@ import { LinearProgress, Fade } from "@material-ui/core";
 import _ from "lodash";
 import store from "@/store";
 import { observer } from "mobx-react";
-import routers from "./routers";
-import Tabbars from "./components/tabbar";
+import Login from "@/pages/login";
+import Registered from "@/pages/registered";
+import EnterpriseInfo from "@/pages/enterpriseinfo";
+import JobInfo from "./pages/jobseekerinfo";
 import GlobalProgress from "@/components/progress";
 import AuthRoute from "@/components/authRoute";
+import Dashboard from "./pages/dashboard";
 
 const l = console.log;
 @observer
@@ -25,25 +28,13 @@ class App extends Component {
         <Fragment>
           <GlobalProgress />
           <AuthRoute />
-          {/* <Tabbars /> */}
           <Switch>
-            {routers.map((route, index) => {
-              // redirect
-              if (route.redirectTo) {
-                return (
-                  <Redirect
-                    from={route.path}
-                    to={route.redirectTo}
-                    exact
-                    strict
-                    key={index}
-                  />
-                );
-              }
-
-              return <Route exact {...route} key={index} />;
-            })}
-            <Route component={() => <div> 404 </div> }/>
+            <Route exact path="/jobSeekerinfo" component={JobInfo} />
+            <Route exact path="/enterpriseinfo" component={EnterpriseInfo} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/registered" component={Registered} />
+            <Route component={Dashboard} />
+            <Route component={() => <div> 404 </div>} />
           </Switch>
         </Fragment>
       </BrowserRouter>

@@ -1,6 +1,6 @@
+
 /**
- * * 企业完善信息页面
- * * 企业注册完后，跳转到该页面完善信息
+ * * 求职者完善信息页面
  */
 
 import React, { Component, Fragment } from "react";
@@ -39,30 +39,28 @@ const l = console.log;
 
 @withStyles(styles)
 @observer
-class EnterpriseInfo extends Component {
+class JobInfo extends Component {
   state = {
     avatar: "",
     title: "",
-    company: "",
-    money: "",
     desc: ""
   };
   render() {
     const { classes: cs, location } = this.props;
-    const { title, company, money, desc } = this.state;
+    const { title, desc } = this.state;
     const isDirect =
       userStore.redirectTo && userStore.redirectTo !== location.pathname;
     return (
       <Fragment>
         {isDirect && <Redirect to={userStore.redirectTo} />}
         <Paper className={cs.root}>
-          <ATitle>企业完善信息</ATitle>
+          <ATitle>求职者完善信息</ATitle>
           <div className={cs.block} />
           <AvatarUpload onChange={this.handleAvatar} />
           <List component="nav">
             <ListItem>
               <TextField
-                label="招聘职位"
+                label="求职岗位"
                 value={title}
                 onChange={this.handleChange("title")}
                 fullWidth
@@ -71,25 +69,7 @@ class EnterpriseInfo extends Component {
             </ListItem>
             <ListItem>
               <TextField
-                label="公司名称"
-                value={company}
-                onChange={this.handleChange("company")}
-                fullWidth
-                margin="dense"
-              />
-            </ListItem>
-            <ListItem>
-              <TextField
-                label="职位薪资"
-                value={money}
-                onChange={this.handleChange("money")}
-                fullWidth
-                margin="dense"
-              />
-            </ListItem>
-            <ListItem>
-              <TextField
-                label="职位简介"
+                label="个人简介"
                 value={desc}
                 onChange={this.handleChange("desc")}
                 fullWidth
@@ -124,4 +104,4 @@ class EnterpriseInfo extends Component {
   handleChange = k => e => this.setState({ [k]: e.target.value });
   handleAvatar = avatar => this.setState({ avatar });
 }
-export default EnterpriseInfo;
+export default JobInfo

@@ -7,6 +7,7 @@ import * as U from "../util";
 
 const l = console.log;
 class UserStore {
+  // 判断用户权限后，跳转的路径
   @observable
   redirectTo = "";
 
@@ -39,13 +40,14 @@ class UserStore {
     let r;
     try {
       r = await axios.post(api.userRegister, { user, pwd, type });
-      // l(r);
+      l(r);
       if (r.code === 0) {
         // 注册成功
         set(this, {
           errMsg: "",
           isAuth: true,
-          redirectTo: getRedirectPath({ type })
+          redirectTo: getRedirectPath({ type }),
+          userinfo: r.data
         });
       } else {
         this._error(r.msg);
@@ -62,6 +64,9 @@ class UserStore {
   login = ({ user, pwd }) => async e => {
     user = user.trim();
     pwd = pwd.trim();
+    if (user === "" || pwd === "") {
+      return (this.errMsg = "请输入账号或者密码！");
+    }
     try {
       let r = await axios.post(api.userLogin, { user, pwd });
       // l(r)
@@ -86,34 +91,34 @@ class UserStore {
 
   /**
    * * 用户完善信息
-   * @param {avatar,title,company,money,decs} data 企业完善的信息资料
+   * @param {avatar,title,company?,money?,decs} data 企业完善的信息资料
    */
   @action.bound
   update = data => async e => {
     let sd = new FormData();
-    for (let k in data) {
+    let result = await new ImageCompressor().compress(data["avatar"], {
+      quality: 0.6
+    });
 
-      // 压缩下头像图片
+    if (!this.userinfo._id) return (this.errMsg = "没有userid!");
+
+    for (const k in data) {
       if (k === "avatar") {
-        let result = await new ImageCompressor().compress(data[k], {
-          quality: 0.6
-        });
-        // 用户登陆后的id是唯一的
         sd.append(k, result, this.userinfo._id + U.fileSuffix(result.name));
-        try {
-          let r = await axios.post(api.update, sd);
-          if (r.code === 0) {
-            this.userinfo = r.data;
-            this.redirectTo = getRedirectPath(r.data);
-          } else {
-            this.errMsg = r.msg;
-          }
-        } catch (error) {
-          this.errMsg = String(error);
-        }
       } else {
         sd.append(k, data[k]);
       }
+    }
+    try {
+      let r = await axios.post(api.update, sd);
+      if (r.code === 0) {
+        this.userinfo = r.data;
+        this.redirectTo = getRedirectPath(r.data);
+      } else {
+        this.errMsg = r.msg;
+      }
+    } catch (error) {
+      this.errMsg = String(error);
     }
   };
 

@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import { Avatar, Typography, Grid } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from 'prop-types';
+import { observer } from "mobx-react";
 
 const l = console.log;
 const styles = theme => ({
@@ -25,6 +26,7 @@ const styles = theme => ({
 });
 
 @withStyles(styles)
+@observer
 class AvatarUpload extends Component {
   state = {
     avatarData: ""
@@ -69,14 +71,6 @@ class AvatarUpload extends Component {
       avatarData: URL.createObjectURL(file)
     });
   };
-
-  shouldComponentUpdate(newProps, newState) {
-    // state 被改变
-    // return true 组件刷新
-    // return false  组件不用刷新，继续运行
-    URL.revokeObjectURL(this.state.avatarData)
-    return true;
-  }
 }
 
 export default AvatarUpload;

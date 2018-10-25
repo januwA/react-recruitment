@@ -2,6 +2,8 @@ import React, { Component, Fragment } from "react";
 import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
+import { observer } from "mobx-react";
+
 
 const styles = theme => ({
   flexGrow1: {
@@ -12,6 +14,7 @@ const styles = theme => ({
 const l = console.log;
 
 @withStyles(styles)
+@observer
 class ATitle extends Component {
   render() {
     const { classes: cs, children } = this.props;

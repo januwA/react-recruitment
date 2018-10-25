@@ -7,9 +7,9 @@ import { withStyles } from "@material-ui/core/styles";
 import NavLinkBar from "../components/navLinkBar";
 import Enterprise from './enterprise'
 import JobSeeker from './jobSeeker'
+import Mine from './mine'
 
 const Msg = () => "msg";
-const Mine = () => "mine";
 
 const styles = theme => ({
   flexGrow1: {
@@ -75,7 +75,7 @@ class Dashboard extends Component {
         <div style={{marginTop: 60}}></div>
         <Switch>
           {navList.map($_ => (
-            <Route key={$_.path} path={$_.path} component={$_.component} />
+            <Route exact key={$_.path} path={$_.path} component={$_.component} />
           ))}
         </Switch>
         <div style={{marginTop: 60}}></div>

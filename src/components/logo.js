@@ -2,6 +2,8 @@ import React, { Component, Fragment } from "react";
 import { Grid,Avatar } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import LogoImage from "@/assets/logo.jpg";
+import { observer } from "mobx-react";
+
 
 const styles = theme => ({
   container: {
@@ -14,6 +16,7 @@ const styles = theme => ({
 });
 
 @withStyles(styles)
+@observer
 class Logo extends Component {
   render() {
     let { classes: cs } = this.props;

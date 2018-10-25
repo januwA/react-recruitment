@@ -3,6 +3,7 @@ import { LinearProgress, Fade } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
 import store from "@/store";
+import { observer } from "mobx-react";
 
 const l = console.log;
 const styles = theme => ({
@@ -16,6 +17,7 @@ const styles = theme => ({
 
 @withRouter
 @withStyles(styles)
+@observer
 class GlobalProgress extends Component {
   componentWillMount() {}
 

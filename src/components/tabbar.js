@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { AppBar, Tabs, Tab, Icon } from "@material-ui/core";
+import { observer } from "mobx-react";
 
 const l = console.log;
 
 @withRouter
+@observer
 class Tabbars extends Component {
   state = {
     isShowTabbar: true,

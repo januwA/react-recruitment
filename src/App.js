@@ -34,7 +34,6 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/registered" component={Registered} />
             <Route component={Dashboard} />
-            <Route component={() => <div> 404 </div>} />
           </Switch>
         </Fragment>
       </BrowserRouter>

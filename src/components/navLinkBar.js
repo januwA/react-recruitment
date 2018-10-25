@@ -7,9 +7,11 @@ import {
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import Logo from '../assets/logo.jpg'
+import { observer } from "mobx-react";
 
 const l = console.log;
 @withRouter
+@observer
 class NavLinkBar extends Component {
   state = {
     value: this.props.location.pathname

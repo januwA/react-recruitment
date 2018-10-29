@@ -13,7 +13,17 @@ const theme = createMuiTheme({
   palette: {
     primary: blue,
     secondary: pink
-  }
+  },
+  props: {
+    centerX: {
+      marginLeft: "50%",
+      transform: "translateX(-50%)"
+    },
+    centerY: {
+      marginTop: "50%",
+      transform: "translateY(-50%)"
+    }
+  },
 });
 
 ReactDOM.render(

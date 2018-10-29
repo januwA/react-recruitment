@@ -3,9 +3,22 @@ import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import userStore from "../store/user.store";
 import { toJS } from "mobx";
-import { Avatar, Grid, Typography, Paper, Button } from "@material-ui/core";
+import {
+  Avatar,
+  Grid,
+  Typography,
+  Paper,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
+import Cookies from "js-cookie";
 
+const l = console.log;
 const styles = theme => ({
   avatarBox: {
     padding: "10px 0"
@@ -16,15 +29,41 @@ const styles = theme => ({
   },
   title: {
     marginTop: "0.4rem"
+  },
+  logoutBtn: {
+    ...theme.props.centerX,
+    width: "80vw",
+    marginTop: "2rem"
   }
 });
 
-const l = console.log;
 @withStyles(styles)
 @observer
 class Mine extends Component {
   static propTypes = {};
+  state = {
+    open: false
+  };
+  /**
+   * * 确认退出登录
+   * * 删除cookie，登录信息，登录状态，重定向页面,并跳转到到login
+   */
+  handleOut = () => {
+    Cookies.remove("userid");
+    userStore.userinfo = {};
+    userStore.isAuth = false
+    userStore.redirectTo = '/login'
+    this.setState({ open: false });
+    this.props.history.replace('/login')
+  };
 
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  logout = e => {
+    this.setState({ open: true });
+  };
   render() {
     l(toJS(userStore.userinfo));
     const { classes } = this.props;
@@ -38,12 +77,17 @@ class Mine extends Component {
                 className={classes.avatar}
               />
             </Grid>
-            <Grid item container justify="center" direction='column' className={classes.title}>
-              <Typography component="h5" gutterBottom align='center'>
+            <Grid
+              item
+              container
+              justify="center"
+              direction="column"
+              className={classes.title}>
+              <Typography variant="headline" gutterBottom align="center">
                 {userStore.userinfo.user}
               </Typography>
               {userStore.userinfo.company && (
-                <Typography component="h5" gutterBottom align='center'>
+                <Typography component="h5" gutterBottom align="center">
                   {userStore.userinfo.company}
                 </Typography>
               )}
@@ -65,11 +109,30 @@ class Mine extends Component {
             </Grid>
           </Grid>
         </Paper>
-        <Grid container justify='center' style={{marginTop: '20px'}}>
-            <Grid item xs={11}>
-                  <Button color='primary' variant='contained' fullWidth>退出登录</Button>
-            </Grid>
-        </Grid>
+        <Button
+          color="primary"
+          variant="contained"
+          className={classes.logoutBtn}
+          onClick={this.logout}>
+          退出登录
+        </Button>
+
+        <Dialog fullWidth open={this.state.open} onClose={this.handleClose}>
+          <DialogTitle>{"注销"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              确定退出登录吗？
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              取消
+            </Button>
+            <Button onClick={this.handleOut} color="primary">
+              确认
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Fragment>
     );
   }

@@ -37,12 +37,15 @@ class Login extends Component {
 
   render() {
     const { user, pwd } = this.state;
-    const { classes } = this.props
+    const { classes } = this.props;
     return (
       <Fragment>
         <Grid container>
           <Grid item lg={3} md={4} xs={11} className={classes.root}>
-            {userStore.redirectTo && <Redirect to={userStore.redirectTo} />}
+            {userStore.redirectTo &&
+              userStore.redirectTo !== "/login" && (
+                <Redirect to={userStore.redirectTo} />
+              )}
             <Logo />
             <List component="nav">
               <ListItem>

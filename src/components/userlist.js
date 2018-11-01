@@ -11,14 +11,21 @@ import {
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { observer } from "mobx-react";
+import { withRouter } from 'react-router-dom'
 import PropTypes from "prop-types";
+
 
 const styles = theme => ({
   card: {}
 });
 @withStyles(styles)
+@withRouter
 @observer
 class UserList extends Component {
+  handleClick = user => e => {
+    // 跳转到聊天页面
+    this.props.history.push(`/chat/${user}`);
+  }
   render() {
     const { classes } = this.props;
     return (
@@ -30,7 +37,7 @@ class UserList extends Component {
         component="section">
         {this.props.list.map($_ => (
           <Grid key={$_._id} item xs={11}>
-            <Card className={classes.card}>
+            <Card className={classes.card} onClick={this.handleClick($_.user)}>
               <CardActionArea>
                 <CardMedia
                   component="img"

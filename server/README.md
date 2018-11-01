@@ -32,3 +32,8 @@ yarn add cookie-parser
     prefix: '/static/',
   });
 ```
+
+## 使用socket
+```
+yarn add @nestjs/websockets
+```

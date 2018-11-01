@@ -19,6 +19,7 @@ import userStore from "@/store/user.store";
 import { observer } from "mobx-react";
 import ErrorAlter from "@/components/errorAlter";
 
+const l = console.log;
 const styles = theme => ({
   root: {
     [theme.breakpoints.up("md")]: {

@@ -23,6 +23,7 @@
     "@nestjs/common": "^5.1.0",
     "@nestjs/core": "^5.1.0",
     "@nestjs/mongoose": "^5.2.2",
+    "@nestjs/websockets": "^5.4.0",
     "cookie-parser": "^1.4.3",
     "fs-extra": "^7.0.0",
     "md5": "^2.2.1",

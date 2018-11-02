@@ -10,6 +10,8 @@
   bottom: 0;
   left: 0;
   width: 100%;
+  background-color: #fff;
+  height: 8vh;
 }
 
 /* Rules for sizing the icon. 字体图标大小， 默认24px*/

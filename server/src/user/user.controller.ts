@@ -49,4 +49,9 @@ export class UserController {
   list(@Query() query) {
     return this.userService.list(query);
   }
+
+  @Get('getMsgList')
+  getMsgList(@Request() req, @Response() res) {
+    return this.userService.getMsgList(req, res);
+  }
 }

@@ -37,7 +37,7 @@ class UserList extends Component {
         component="section">
         {this.props.list.map($_ => (
           <Grid key={$_._id} item xs={11}>
-            <Card className={classes.card} onClick={this.handleClick($_.user)}>
+            <Card className={classes.card} onClick={this.handleClick($_._id)}>
               <CardActionArea>
                 <CardMedia
                   component="img"

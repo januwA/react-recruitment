@@ -11,7 +11,10 @@ const _filter = { pwd: 0, __v: 0 };
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('users') private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectModel('users') private readonly userModel: Model<User>,
+    @InjectModel('chats') private readonly chatModel: Model<any>,
+  ) {}
 
   async info(req) {
     const { userid } = req.cookies;
@@ -28,7 +31,8 @@ export class UserService {
         data: r,
         msg: 'ok',
       };
-    } catch (error) { // The number of spaces a tab is considered equal to
+    } catch (error) {
+      // The number of spaces a tab is considered equal to
       return {
         code: 1,
         msg: String(error),
@@ -148,16 +152,33 @@ export class UserService {
   async list(query) {
     let { type } = query;
     // 获取type相等，并且上传了头像的用户
-    let r = await this.userModel.find({
-      type,
-      avatar: {
-        $ne: null
-      }
-    }, _filter);
+    let r = await this.userModel.find(
+      {
+        type,
+        avatar: {
+          $ne: null,
+        },
+      },
+      _filter,
+    );
     return {
       code: 0,
-      data: r
-    }
+      data: r,
+    };
+  }
+  /**
+   * * 获取所有的消息列表
+   * @param req
+   * @param res
+   */
+  async getMsgList(req, res) {
+    const _id = req.cookies.userid;
+    let r = await this.chatModel.find({});
+    l(r);
+    res.json({
+      code: 0,
+      data: r,
+    });
   }
 
   _pwdMd5(pwd) {

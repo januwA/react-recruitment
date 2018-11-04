@@ -7,7 +7,6 @@ import * as serviceWorker from "./serviceWorker";
 import "./axios.config";
 import App from "./App";
 import "./index.css";
-import DevTools from 'mobx-react-devtools'
 
 // 自定义主题
 const theme = createMuiTheme({
@@ -33,7 +32,6 @@ ReactDOM.render(
     <MuiThemeProvider theme={theme}>
       <App />
     </MuiThemeProvider>
-    <DevTools />
   </Fragment>,
   document.getElementById("root")
 );

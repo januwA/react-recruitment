@@ -9,13 +9,18 @@ import {
   IconButton,
   Avatar,
   Grid,
-  Typography
+  Typography,
+  Icon,
+  AppBar,
+  Toolbar
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import io from "socket.io-client";
 import userStore from "../store/user.store";
+import userListStore from "../store/userList.store";
 import chatStore from "../store/chat.store";
 import { observer } from "mobx-react";
+import { get } from "mobx";
 
 const socket = io("ws://localhost:5000");
 const l = console.log;
@@ -29,6 +34,13 @@ const styles = theme => ({
   item: {
     background: "#fff",
     margin: "4px 0"
+  },
+  grow: {
+    flexGrow: 1
+  },
+  menuButton: {
+    marginLeft: -12,
+    marginRight: 20
   }
 });
 
@@ -79,13 +91,15 @@ const SendModule = observer(({ onChange, onSend, value }) => (
 @observer
 class Chat extends Component {
   state = {
-    text: "",
+    text: ""
   };
+
   handleChange = e => {
     this.setState({
       text: e.target.value
     });
   };
+
   handleSend = e => {
     const sd = {
       from: userStore.userinfo._id,
@@ -97,25 +111,45 @@ class Chat extends Component {
     chatStore.sendMsg(sd);
     this.setState({ text: "" });
   };
-  componentDidMount() {
-    // 获取msg列表
-    chatStore.getMsgList();
-    // 监听每次socket的返回数据
-    chatStore.msgRecv();
-  }
 
+  componentWillMount() {
+    // 避免在刷新页面时没有数据
+    if (!chatStore.chatmsg.length) {
+      chatStore.getMsgList(); // 获取msg列表
+      chatStore.msgRecv(); // 监听每次socket的返回数据
+    }
+  }
+  handleBack = e => {
+    this.props.history.goBack()
+  };
   render() {
-    const { text, msgs } = this.state;
-    const { classes } = this.props;
+    const { text } = this.state;
+    const {
+      classes,
+      match: {
+        params: { user }
+      }
+    } = this.props;
+    if (!chatStore.users[user]) return null;
     return (
       <Fragment>
         <div className={classes.root}>
-          {!!msgs.length || (
-            <Typography variant="caption" gutterBottom align="center">
-              {" "}
-              暂无消息&gt;_&lt;{" "}
-            </Typography>
-          )}
+          <AppBar position="static">
+            <Toolbar>
+              <IconButton
+                className={classes.menuButton}
+                color="inherit"
+                onClick={this.handleBack}>
+                <Icon>chevron_left</Icon>
+              </IconButton>
+              <Typography
+                variant="title"
+                color="inherit"
+                className={classes.grow}>
+                {chatStore.users[user].name}
+              </Typography>
+            </Toolbar>
+          </AppBar>
           <List>
             {chatStore.chatmsg.map((el, i) => (
               <ListItem key={i} dense button className={classes.item}>

@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 
 export const UserSchema = new mongoose.Schema({
-  user: { type: String, require: true, unique: true}, // 账户
+  user: { type: String, require: true, unique: true }, // 账户
   pwd: { type: String, require: true }, // 密码
   type: { type: String, require: true }, // 企业或求职者
   avatar: { type: String }, // 头像

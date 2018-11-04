@@ -166,6 +166,7 @@ export class UserService {
       data: r,
     };
   }
+
   /**
    * * 获取所有的消息列表
    * @param req
@@ -173,11 +174,25 @@ export class UserService {
    */
   async getMsgList(req, res) {
     const _id = req.cookies.userid;
-    let r = await this.chatModel.find({});
-    l(r);
+    let userData = await this.userModel.find({});
+    const users = {};
+    userData.forEach(el => {
+      users[el._id] = { name: el.user, avatar: el.avatar };
+    });
+    let r = await this.chatModel.find({
+      $or: [
+        {
+          from: _id,
+        },
+        { to: _id },
+      ],
+    });
     res.json({
       code: 0,
-      data: r,
+      data: {
+        msgs: r,
+        users,
+      },
     });
   }
 

@@ -18,7 +18,7 @@ export class EventsGateway {
   @SubscribeMessage('message')
   async onEvent(client, data) {
     // 获取消息数据 存在数据库里面
-    l(data);
+    // l(data);
     const { from, to, content, avatar } = data;
     const charid = [from, to].sort().join('_');
     let r = new this.chatModel({
@@ -28,7 +28,7 @@ export class EventsGateway {
       content,
       avatar,
     });
-    l(r);
+    // l(r);
     await r.save();
     this.server.emit('resmsg', r);
   }

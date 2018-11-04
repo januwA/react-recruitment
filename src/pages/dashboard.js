@@ -5,9 +5,10 @@ import userStore from "../store/user.store";
 import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import NavLinkBar from "../components/navLinkBar";
-import Enterprise from './enterprise'
-import JobSeeker from './jobSeeker'
-import Mine from './mine'
+import Enterprise from "./enterprise";
+import JobSeeker from "./jobSeeker";
+import Mine from "./mine";
+import chatStore from "../store/chat.store";
 
 const Msg = () => "msg";
 
@@ -21,6 +22,10 @@ const l = console.log;
 @withStyles(styles)
 @observer
 class Dashboard extends Component {
+  componentWillMount() {
+    chatStore.getMsgList(); // 获取msg列表
+    chatStore.msgRecv(); // 监听每次socket的返回数据
+  }
   render() {
     //  企业登陆后查看求职者列表，求职者登陆后查看企业列表
     const userinfo = userStore.userinfo;
@@ -59,7 +64,6 @@ class Dashboard extends Component {
 
     const { classes: cs } = this.props;
     const { pathname } = this.props.location;
-    l(pathname);
     return (
       <Fragment>
         <AppBar position="fixed" color="primary">
@@ -72,13 +76,18 @@ class Dashboard extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-        <div style={{marginTop: 60}}></div>
+        <div style={{ marginTop: 60 }} />
         <Switch>
           {navList.map($_ => (
-            <Route exact key={$_.path} path={$_.path} component={$_.component} />
+            <Route
+              exact
+              key={$_.path}
+              path={$_.path}
+              component={$_.component}
+            />
           ))}
         </Switch>
-        <div style={{marginTop: 60}}></div>
+        <div style={{ marginTop: 60 }} />
         <NavLinkBar data={navList} />
       </Fragment>
     );

@@ -11,6 +11,9 @@ class ChatStore {
   @observable
   unread = 0; // 未读消息条数
 
+  @observable
+  users = {};
+
   /**
    * * 获取聊天列表
    */
@@ -18,9 +21,11 @@ class ChatStore {
   getMsgList = async e => {
     let r = await axios.get("/user/getMsgList");
     if (r.code == 0) {
+      l(r.data)
       // 更新列表和未读消息
-      this.chatmsg = r.data;
-      this.unread = r.data.filter(el => !el.read).length;
+      this.chatmsg = r.data.msgs;
+      this.users = r.data.users;
+      this.unread = r.data.msgs.filter(el => !el.read).length;
     }
   };
 
@@ -30,16 +35,11 @@ class ChatStore {
   @action.bound
   msgRecv = e => {
     socket.on("resmsg", data => {
+      l(data);
       this.chatmsg.push(data);
       this.unread = this.chatmsg.length;
     });
   };
-
-  /**
-   * * 标识读取
-   */
-  @action.bound
-  msgRead = e => {};
 
   /**
    * * 发送消息

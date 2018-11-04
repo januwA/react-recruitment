@@ -15,11 +15,8 @@ class UserList {
         type: type
       }
     });
-    l(r)
     if(r.code === 0){
       this.userlist = r.data
-    }else{
-      l(r)
     }
   }
 }

@@ -10,3 +10,6 @@ export const getRedirectPath = ({ type, avatar }) => {
 
 // 获取图片后缀 .png .jpg .gif
 export const fileSuffix = name => name.replace(/\w.+(?=\.)/g, "");
+
+export const getChatId = (userId, targetId) =>
+  [userId, targetId].sort().join("_");

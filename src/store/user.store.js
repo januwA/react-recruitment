@@ -76,6 +76,7 @@ class UserStore {
         this.isAuth = true;
         this.redirectTo = getRedirectPath(r.data);
         this.userinfo = r.data;
+        sessionStorage.setItem('_id', this.userinfo._id);
       } else {
         this._error(r.msg);
       }

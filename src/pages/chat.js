@@ -21,6 +21,7 @@ import userListStore from "../store/userList.store";
 import chatStore from "../store/chat.store";
 import { observer } from "mobx-react";
 import { get } from "mobx";
+import * as util from "../util";
 
 const socket = io("ws://localhost:5000");
 const l = console.log;
@@ -115,13 +116,15 @@ class Chat extends Component {
   componentWillMount() {
     // 避免在刷新页面时没有数据
     if (!chatStore.chatmsg.length) {
-      chatStore.getMsgList(); // 获取msg列表
+      chatStore.getMsgList(userStore.userinfo._id); // 获取msg列表
       chatStore.msgRecv(); // 监听每次socket的返回数据
     }
   }
+
   handleBack = e => {
-    this.props.history.goBack()
+    this.props.history.goBack();
   };
+
   render() {
     const { text } = this.state;
     const {
@@ -131,6 +134,9 @@ class Chat extends Component {
       }
     } = this.props;
     if (!chatStore.users[user]) return null;
+    const chatid = util.getChatId(user, userStore.userinfo._id);
+    // 只需要当前用户，和target的聊天信息
+    let chatmsgs = chatStore.chatmsg.filter(el => el.chatid == chatid);
     return (
       <Fragment>
         <div className={classes.root}>
@@ -151,7 +157,7 @@ class Chat extends Component {
             </Toolbar>
           </AppBar>
           <List>
-            {chatStore.chatmsg.map((el, i) => (
+            {chatmsgs.map((el, i) => (
               <ListItem key={i} dense button className={classes.item}>
                 <MyList>{{ ...el }}</MyList>
               </ListItem>

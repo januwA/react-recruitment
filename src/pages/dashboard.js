@@ -9,6 +9,7 @@ import Enterprise from "./enterprise";
 import JobSeeker from "./jobSeeker";
 import Mine from "./mine";
 import chatStore from "../store/chat.store";
+import { toJS } from "mobx";
 
 const Msg = () => "msg";
 
@@ -23,8 +24,14 @@ const l = console.log;
 @observer
 class Dashboard extends Component {
   componentWillMount() {
-    chatStore.getMsgList(); // 获取msg列表
-    chatStore.msgRecv(); // 监听每次socket的返回数据
+    // 避免多次调用 socket监听
+    if (!chatStore.chatmsg.length) {
+      chatStore.getMsgList(userStore.userinfo._id); // 获取msg列表
+      chatStore.msgRecv(); // 监听每次socket的返回数据
+    }
+  }
+  componentDidMount(){
+    
   }
   render() {
     //  企业登陆后查看求职者列表，求职者登陆后查看企业列表

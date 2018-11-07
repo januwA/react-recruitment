@@ -20,9 +20,9 @@ export class EventsGateway {
     // 获取消息数据 存在数据库里面
     // l(data);
     const { from, to, content, avatar } = data;
-    const charid = [from, to].sort().join('_');
+    const chatid = [from, to].sort().join('_');
     let r = new this.chatModel({
-      charid,
+      chatid,
       from,
       to,
       content,

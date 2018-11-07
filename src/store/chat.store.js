@@ -1,8 +1,10 @@
-import { observable, action, computed } from "mobx";
+import { observable, action, computed, toJS } from "mobx";
 import axios from "axios";
 import io from "socket.io-client";
-const socket = io("ws://localhost:5000");
+import userStore from "../store/user.store";
+import Cookies from "js-cookie";
 
+const socket = io("ws://localhost:5000");
 const l = console.log;
 class ChatStore {
   @observable
@@ -21,11 +23,13 @@ class ChatStore {
   getMsgList = async e => {
     let r = await axios.get("/user/getMsgList");
     if (r.code == 0) {
-      l(r.data)
       // 更新列表和未读消息
       this.chatmsg = r.data.msgs;
       this.users = r.data.users;
-      this.unread = r.data.msgs.filter(el => !el.read).length;
+      // 展示的未读消息数量，需要是未读状态&接收者是自己的消息
+      this.unread = r.data.msgs.filter(
+        el => !el.read && el.to == sessionStorage.getItem("_id")
+      ).length;
     }
   };
 
@@ -37,7 +41,10 @@ class ChatStore {
     socket.on("resmsg", data => {
       l(data);
       this.chatmsg.push(data);
-      this.unread = this.chatmsg.length;
+      // 在每次發送消息也需要过滤
+      this.unread = this.chatmsg.filter(
+        el => !el.read && el.to == sessionStorage.getItem("_id")
+      ).length;
     });
   };
 

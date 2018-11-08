@@ -12,7 +12,9 @@ import {
   Typography,
   Icon,
   AppBar,
-  Toolbar
+  Toolbar,
+  GridList,
+  GridListTile
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import io from "socket.io-client";
@@ -20,6 +22,7 @@ import userStore from "../store/user.store";
 import userListStore from "../store/userList.store";
 import chatStore from "../store/chat.store";
 import { observer } from "mobx-react";
+import Logo from "../assets/logo.jpg";
 import { get } from "mobx";
 import * as util from "../util";
 
@@ -42,6 +45,12 @@ const styles = theme => ({
   menuButton: {
     marginLeft: -12,
     marginRight: 20
+  },
+  gridList: {
+    flexWrap: "nowrap",
+    transform: "translateZ(0)",
+    padding: 10,
+    fontSize: 21
   }
 });
 
@@ -63,54 +72,93 @@ const LList = observer(props => (
   </Fragment>
 ));
 
-const MyList = observer(
-  ({ children: { from, ...arg } }) =>
-    from === userStore.userinfo._id ? <RList {...arg} /> : <LList {...arg} />
+const MyList = observer(({ children: { from, ...arg } }) =>
+  from === userStore.userinfo._id ? <RList {...arg} /> : <LList {...arg} />
 );
+const tileData = [{ img: Logo }, { img: Logo }, { img: Logo }];
 
-const SendModule = observer(({ onChange, onSend, value }) => (
-  <div className="fixed-footer">
-    <Grid container alignItems="center" justify="space-around">
-      <Grid item xs={9}>
-        <TextField
-          placeholder="输入"
-          value={value}
-          margin="normal"
-          fullWidth
-          onChange={onChange}
-        />
-      </Grid>
-      <Grid item xs={2}>
-        <Button color="primary" variant="contained" onClick={onSend}>
-          发送
-        </Button>
-      </Grid>
-    </Grid>
-  </div>
-));
+@withStyles(styles)
+@observer
+class Emojis extends Component {
+  render() {
+    const { classes } = this.props;
+    return (
+      <GridList className={classes.gridList} cols={1} cellHeight="auto">
+        {chatStore.emojis.map((el, index) => (
+          <Grid container direction="column" key={index} spacing={8}>
+            <Grid item onClick={chatStore.addEmojiToText}>
+              {el[0]}
+            </Grid>
+            <Grid item onClick={chatStore.addEmojiToText}>
+              {el[1]}
+            </Grid>
+          </Grid>
+        ))}
+      </GridList>
+    );
+  }
+}
+
+@withStyles(styles)
+@observer
+class SendModule extends Component {
+  render() {
+    const { onChange, onSend, classes } = this.props;
+    return (
+      <div className="fixed-footer">
+        <Grid
+          container
+          alignItems="center"
+          spacing={8}
+          style={{ padding: "0 8px" }}
+        >
+          <Grid item style={{ flexGrow: "1" }}>
+            <TextField
+              placeholder="输入"
+              value={chatStore.text}
+              fullWidth
+              margin="normal"
+              onChange={onChange}
+            />
+          </Grid>
+          <Grid item>
+            <Button
+              mini
+              variant="fab"
+              color="secondary"
+              onClick={chatStore.toggleShowEmojis}
+            >
+              <Icon>sentiment_satisfied_alt</Icon>
+            </Button>
+          </Grid>
+          <Grid>
+            <Button mini color="primary" variant="contained" onClick={onSend}>
+              发送
+            </Button>
+          </Grid>
+        </Grid>
+        {chatStore.showEmojis && <Emojis />}
+      </div>
+    );
+  }
+}
+
 @withStyles(styles)
 @observer
 class Chat extends Component {
-  state = {
-    text: ""
-  };
-
   handleChange = e => {
-    this.setState({
-      text: e.target.value
-    });
+    chatStore.text = e.target.value;
   };
 
   handleSend = e => {
     const sd = {
       from: userStore.userinfo._id,
       to: this.props.match.params.user,
-      content: this.state.text,
+      content: chatStore.text,
       avatar: userStore.userinfo.avatar
     };
-    l(sd);
     chatStore.sendMsg(sd);
-    this.setState({ text: "" });
+    chatStore.text = "";
   };
 
   componentWillMount() {
@@ -126,7 +174,6 @@ class Chat extends Component {
   };
 
   render() {
-    const { text } = this.state;
     const {
       classes,
       match: {
@@ -145,13 +192,15 @@ class Chat extends Component {
               <IconButton
                 className={classes.menuButton}
                 color="inherit"
-                onClick={this.handleBack}>
+                onClick={this.handleBack}
+              >
                 <Icon>chevron_left</Icon>
               </IconButton>
               <Typography
                 variant="title"
                 color="inherit"
-                className={classes.grow}>
+                className={classes.grow}
+              >
                 {chatStore.users[user].name}
               </Typography>
             </Toolbar>
@@ -163,11 +212,7 @@ class Chat extends Component {
               </ListItem>
             ))}
           </List>
-          <SendModule
-            onChange={this.handleChange}
-            onSend={this.handleSend}
-            value={text}
-          />
+          <SendModule onChange={this.handleChange} onSend={this.handleSend} />
         </div>
       </Fragment>
     );

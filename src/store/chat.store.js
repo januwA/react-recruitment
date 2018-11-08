@@ -3,10 +3,14 @@ import axios from "axios";
 import io from "socket.io-client";
 import userStore from "../store/user.store";
 import Cookies from "js-cookie";
+import * as _ from "lodash";
 
 const socket = io("ws://localhost:5000");
 const l = console.log;
 class ChatStore {
+  @observable
+  text = "";
+
   @observable
   chatmsg = []; // 消息列表
 
@@ -15,6 +19,19 @@ class ChatStore {
 
   @observable
   users = {};
+
+  @observable
+  showEmojis = false;
+
+  @computed
+  get emojis() {
+    return _.chunk(
+      "😀 😁 😂 🤣 😃 😄 😅 😆 😉 😊 😋 😎 😍 😘 😗 😙 ".split(
+        /\s+/
+      ),
+      2
+    );
+  }
 
   /**
    * * 获取聊天列表
@@ -54,6 +71,19 @@ class ChatStore {
   @action.bound
   sendMsg = sd => {
     socket.emit("message", sd);
+  };
+
+  /**
+   * * 切换emojis的溴铵是或隐藏
+   */
+  @action.bound
+  toggleShowEmojis() {
+    this.showEmojis = !this.showEmojis;
+  }
+
+  @action.bound
+  addEmojiToText = e => {
+    this.text += e.target.innerHTML
   };
 }
 

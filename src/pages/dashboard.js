@@ -10,16 +10,15 @@ import JobSeeker from "./jobSeeker";
 import Mine from "./mine";
 import chatStore from "../store/chat.store";
 import { toJS } from "mobx";
+import Msg from './msg'
 
-const Msg = () => "msg";
-
+const l = console.log;
 const styles = theme => ({
   flexGrow1: {
     flexGrow: 1,
     textAlign: "center"
   }
 });
-const l = console.log;
 @withStyles(styles)
 @observer
 class Dashboard extends Component {

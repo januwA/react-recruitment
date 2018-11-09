@@ -26,9 +26,7 @@ class ChatStore {
   @computed
   get emojis() {
     return _.chunk(
-      "😀 😁 😂 🤣 😃 😄 😅 😆 😉 😊 😋 😎 😍 😘 😗 😙 ".split(
-        /\s+/
-      ),
+      "😀 😁 😂 🤣 😃 😄 😅 😆 😉 😊 😋 😎 😍 😘 😗 😙 ".split(/\s+/),
       2
     );
   }
@@ -83,7 +81,7 @@ class ChatStore {
 
   @action.bound
   addEmojiToText = e => {
-    this.text += e.target.innerHTML
+    this.text += e.target.innerHTML;
   };
 }
 

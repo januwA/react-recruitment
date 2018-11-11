@@ -54,7 +54,6 @@ class ChatStore {
   @action.bound
   msgRecv = e => {
     socket.on("resmsg", data => {
-      l(data);
       this.chatmsg.push(data);
       // 在每次發送消息也需要过滤
       this.unread = this.chatmsg.filter(
@@ -82,6 +81,20 @@ class ChatStore {
   @action.bound
   addEmojiToText = e => {
     this.text += e.target.innerHTML;
+  };
+
+  // 更改from=from, to=userid的消息的 read改为strue
+  @action.bound
+  readMsg = async from => {
+    let r = await axios.post("/user/readmsg", { from });
+    const userid = sessionStorage.getItem("_id");
+    if (r.code == 0) {
+      this.unread -= r.data;
+      this.chatmsg = this.chatmsg.map(el => ({
+        ...el,
+        read: el.from === from ? true : el.read
+      }));
+    }
   };
 }
 

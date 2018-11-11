@@ -196,6 +196,17 @@ export class UserService {
     });
   }
 
+  // 更新消息的read状态
+  async readmsg(req, res) {
+    const userid = req.cookies.userid;
+    const { from } = req.body;
+    const where = { from, to: userid };
+    let r = await this.chatModel.updateMany(where, {
+      $set: { read: true },
+    });
+    // 返回影响的行数
+    res.json({ code: 0, data: r.nModified });
+  }
   _pwdMd5(pwd) {
     return md5(md5(pwd + 'ajanuw827--~'));
   }

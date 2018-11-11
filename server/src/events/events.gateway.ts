@@ -19,7 +19,7 @@ export class EventsGateway {
   async onEvent(client, data) {
     // 获取消息数据 存在数据库里面
     // l(data);
-    const { from, to, content, avatar } = data;
+    const { from, to, content, avatar, from_type } = data;
     const chatid = [from, to].sort().join('_');
     let r = new this.chatModel({
       chatid,
@@ -27,6 +27,7 @@ export class EventsGateway {
       to,
       content,
       avatar,
+      from_type,
     });
     // l(r);
     await r.save();

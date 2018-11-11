@@ -23,7 +23,7 @@ import userListStore from "../store/userList.store";
 import chatStore from "../store/chat.store";
 import { observer } from "mobx-react";
 import Logo from "../assets/logo.jpg";
-import { get } from "mobx";
+import { get, toJS } from "mobx";
 import * as util from "../util";
 
 const socket = io("ws://localhost:5000");
@@ -31,6 +31,7 @@ const l = console.log;
 
 const styles = theme => ({
   root: {
+    marginTop: "8vh",
     minHeight: "100vh",
     backgroundColor: "#FAFAFA",
     marginBottom: "8vh"
@@ -155,7 +156,8 @@ class Chat extends Component {
       from: userStore.userinfo._id,
       to: this.props.match.params.user,
       content: chatStore.text,
-      avatar: userStore.userinfo.avatar
+      avatar: userStore.userinfo.avatar,
+      from_type: userStore.userinfo.type
     };
     chatStore.sendMsg(sd);
     chatStore.text = "";
@@ -167,6 +169,12 @@ class Chat extends Component {
       chatStore.getMsgList(userStore.userinfo._id); // 获取msg列表
       chatStore.msgRecv(); // 监听每次socket的返回数据
     }
+  }
+
+  componentWillUnmount() {
+    // 谁发给我的id
+    const from = this.props.match.params.user;
+    chatStore.readMsg(from);
   }
 
   handleBack = e => {
@@ -187,7 +195,7 @@ class Chat extends Component {
     return (
       <Fragment>
         <div className={classes.root}>
-          <AppBar position="static">
+          <AppBar position="fixed" style={{ height: "8vh" }}>
             <Toolbar>
               <IconButton
                 className={classes.menuButton}

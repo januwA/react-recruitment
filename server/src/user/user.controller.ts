@@ -54,4 +54,9 @@ export class UserController {
   getMsgList(@Request() req, @Response() res) {
     return this.userService.getMsgList(req, res);
   }
+
+  @Post('readmsg')
+  readmsg(@Request() req, @Response() res) {
+    return this.userService.readmsg(req, res);
+  }
 }

@@ -11,6 +11,11 @@ export const ChatSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  // 谁发的身份 求职者jobSeeker， 商户enterprise
+  from_type: {
+    type: String,
+    require: true,
+  },
   // 发给谁的
   to: {
     type: String,

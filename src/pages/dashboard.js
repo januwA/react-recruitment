@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { observer } from "mobx-react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import userStore from "../store/user.store";
 import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
@@ -10,7 +10,7 @@ import JobSeeker from "./jobSeeker";
 import Mine from "./mine";
 import chatStore from "../store/chat.store";
 import { toJS } from "mobx";
-import Msg from './msg'
+import Msg from "./msg";
 
 const l = console.log;
 const styles = theme => ({
@@ -19,6 +19,40 @@ const styles = theme => ({
     textAlign: "center"
   }
 });
+const userinfo = userStore.userinfo;
+const navList = [
+  {
+    path: "/enterprise",
+    text: "求职者",
+    icon: "group",
+    title: "求职者列表",
+    component: Enterprise,
+    hide: userinfo.type == "jobSeeker"
+  },
+  {
+    path: "/jobSeeker",
+    text: "企业",
+    icon: "domain",
+    title: "企业列表",
+    component: JobSeeker,
+    hide: userinfo.type == "enterprise"
+  },
+  {
+    path: "/msg", // 求职者需要查看企业列表
+    text: "消息",
+    icon: "message",
+    title: "消息列表",
+    component: Msg
+  },
+  {
+    path: "/mine", // 求职者需要查看企业列表
+    text: "我的",
+    icon: "person",
+    title: "个人中心",
+    component: Mine
+  }
+];
+
 @withStyles(styles)
 @observer
 class Dashboard extends Component {
@@ -29,56 +63,21 @@ class Dashboard extends Component {
       chatStore.msgRecv(); // 监听每次socket的返回数据
     }
   }
-  componentDidMount(){
-    
-  }
   render() {
     //  企业登陆后查看求职者列表，求职者登陆后查看企业列表
-    const userinfo = userStore.userinfo;
-    const navList = [
-      {
-        path: "/enterprise",
-        text: "求职者",
-        icon: "group",
-        title: "求职者列表",
-        component: Enterprise,
-        hide: userinfo.type == "jobSeeker"
-      },
-      {
-        path: "/jobSeeker",
-        text: "企业",
-        icon: "domain",
-        title: "企业列表",
-        component: JobSeeker,
-        hide: userinfo.type == "enterprise"
-      },
-      {
-        path: "/msg", // 求职者需要查看企业列表
-        text: "消息",
-        icon: "message",
-        title: "消息列表",
-        component: Msg
-      },
-      {
-        path: "/mine", // 求职者需要查看企业列表
-        text: "我的",
-        icon: "person",
-        title: "个人中心",
-        component: Mine
-      }
-    ];
-
     const { classes: cs } = this.props;
     const { pathname } = this.props.location;
-    return (
+    const el = navList.find($_ => $_.path === pathname);
+    return !!el ? (
       <Fragment>
         <AppBar position="fixed" color="primary">
           <Toolbar>
             <Typography
               variant="title"
               color="inherit"
-              className={cs.flexGrow1}>
-              {navList.find($_ => $_.path === pathname).title}
+              className={cs.flexGrow1}
+            >
+              {el.title}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -96,6 +95,8 @@ class Dashboard extends Component {
         <div style={{ marginTop: 60 }} />
         <NavLinkBar data={navList} />
       </Fragment>
+    ) : (
+      <Redirect to="/login" exact/>
     );
   }
 }

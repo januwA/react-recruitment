@@ -78,22 +78,16 @@ class Registered extends Component {
               margin="dense"
             />
           </ListItem>
-          <ListItem dense button>
+          <ListItem dense button onClick={this.radioChange("jobSeeker")}>
             <ListItemText primary={"求职者"} />
             <ListItemSecondaryAction>
-              <Radio
-                checked={type === "jobSeeker"}
-                onChange={this.radioChange("jobSeeker")}
-              />
+              <Radio id="jobSeeker" checked={type === "jobSeeker"} />
             </ListItemSecondaryAction>
           </ListItem>
-          <ListItem dense button>
+          <ListItem dense button onClick={this.radioChange("enterprise")}>
             <ListItemText primary={"企业"} />
             <ListItemSecondaryAction>
-              <Radio
-                checked={type === "enterprise"}
-                onChange={this.radioChange("enterprise")}
-              />
+              <Radio checked={type === "enterprise"} />
             </ListItemSecondaryAction>
           </ListItem>
         </List>
@@ -109,10 +103,7 @@ class Registered extends Component {
             </Button>
           </Grid>
         </Grid>
-        <ErrorAlter
-          msg={UserStore.errMsg}
-          onClose={this.handleClose}
-        />
+        <ErrorAlter msg={UserStore.errMsg} onClose={this.handleClose} />
       </Fragment>
     );
   }

@@ -5,6 +5,7 @@ import { User } from './interfaces/user.interface';
 import * as md5 from 'md5';
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import * as os from 'os';
 
 const l = console.log;
 const _filter = { pwd: 0, __v: 0 };
@@ -32,7 +33,6 @@ export class UserService {
         msg: 'ok',
       };
     } catch (error) {
-      // The number of spaces a tab is considered equal to
       return {
         code: 1,
         msg: String(error),
@@ -98,53 +98,33 @@ export class UserService {
    */
   async update(req, res, avatarBf, body) {
     let userid = req.cookies.userid;
-    if (!userid) {
-      return res.json({ code: 1 });
-    }
+    if (!userid) return res.json({ code: 1 });
 
     let fileName = Date.now() + '_' + avatarBf.originalname;
-    l(fileName);
     const savePath = path.join(__dirname, '..', '..', 'uploads', fileName);
-    const exists = await fs.pathExists(savePath);
-    if (exists) {
+    // 保存头像
+    // await fs.outputFile(savePath, avatarBf.buffer);
+    fs.outputFile(savePath, avatarBf.buffer);
+    const showPath = `/static/${fileName}`;
+    body.avatar = showPath;
+
+    let r = await this.userModel.updateOne(
+      {
+        _id: userid,
+      },
+      body,
+    );
+
+    // 更新成功，返回新数据
+    if (r.ok) {
+      let r = await this.userModel.findOne({ _id: userid }, _filter);
       return res.json({
-        code: 1,
-        msg: '保存头像失败！！',
+        code: 0,
+        data: r,
       });
-    }
-
-    try {
-      // 保存头像
-      await fs.outputFile(savePath, avatarBf.buffer);
-
-      // 拼接一个网络路径 localhost:5000/static/avatar.png
-      const showPath = `http://${req.headers.host}/static/${fileName}`;
-      body.avatar = showPath;
-
-      let r = await this.userModel.updateOne(
-        {
-          _id: userid,
-        },
-        body,
-      );
-
-      // 更新成功，返回新数据
-      if (r.ok) {
-        let r = await this.userModel.findOne({ _id: userid }, _filter);
-        return res.json({
-          code: 0,
-          data: r,
-        });
-      } else {
-        return res.json({
-          code: 1,
-          msg: r,
-        });
-      }
-    } catch (err) {
+    } else {
       return res.json({
         code: 1,
-        msg: String(err),
       });
     }
   }

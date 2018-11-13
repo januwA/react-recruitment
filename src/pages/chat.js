@@ -2,7 +2,6 @@ import React, { Component, Fragment } from "react";
 import {
   List,
   ListItem,
-  ListItemSecondaryAction,
   Button,
   TextField,
   ListItemText,
@@ -13,22 +12,28 @@ import {
   Icon,
   AppBar,
   Toolbar,
-  GridList,
-  GridListTile
+  GridList
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import io from "socket.io-client";
 import userStore from "../store/user.store";
-import userListStore from "../store/userList.store";
 import chatStore from "../store/chat.store";
 import { observer } from "mobx-react";
+import { withRouter } from "react-router-dom";
 import Logo from "../assets/logo.jpg";
-import { get, toJS } from "mobx";
 import * as util from "../util";
+import * as _ from "lodash";
+import { toJS } from "mobx";
 
-const socket = io("ws://localhost:5000");
 const l = console.log;
-
+let url = "";
+if (process.env.NODE_ENV !== "production") {
+  url = "ws://localhost:5000";
+} else {
+  url = "ws://react.recruitment.ajanuw.fun:5000";
+}
+l(url);
+const socket = io(url);
 const styles = theme => ({
   root: {
     marginTop: "8vh",
@@ -145,13 +150,39 @@ class SendModule extends Component {
 }
 
 @withStyles(styles)
+@withRouter
+@observer
+class MsgList extends Component {
+  render() {
+    const { classes } = this.props;
+    const chatid = util.getChatId(
+      this.props.match.params.user,
+      toJS(userStore.userinfo._id)
+    );
+
+    // 只需要当前用户，和target的聊天信息
+    let chatmsgs = chatStore.chatmsg.filter(el => el.chatid == chatid);
+    return (
+      <List>
+        {chatmsgs.map(el => (
+          <ListItem key={el._id} dense button className={classes.item}>
+            <MyList>{{ ...el }}</MyList>
+          </ListItem>
+        ))}
+      </List>
+    );
+  }
+}
+
+@withStyles(styles)
 @observer
 class Chat extends Component {
   handleChange = e => {
     chatStore.text = e.target.value;
   };
 
-  handleSend = e => {
+  handleSend = _.throttle(e => {
+    if (chatStore.text == "") return false;
     const sd = {
       from: userStore.userinfo._id,
       to: this.props.match.params.user,
@@ -161,11 +192,13 @@ class Chat extends Component {
     };
     chatStore.sendMsg(sd);
     chatStore.text = "";
-  };
+  }, 500);
 
-  componentWillMount() {
+  componentDidMount() {
     // 避免在刷新页面时没有数据
-    if (!chatStore.chatmsg.length) {
+    // chatStore.only  避免在两次 length等于0在调用多次 socket监听事件
+    // if (!chatStore.chatmsg.length) {
+    if (!chatStore.chatmsg.length && chatStore.only) {
       chatStore.getMsgList(userStore.userinfo._id); // 获取msg列表
       chatStore.msgRecv(); // 监听每次socket的返回数据
     }
@@ -182,16 +215,10 @@ class Chat extends Component {
   };
 
   render() {
-    const {
-      classes,
-      match: {
-        params: { user }
-      }
-    } = this.props;
+    const { classes } = this.props;
+    const user = this.props.match.params.user;
     if (!chatStore.users[user]) return null;
-    const chatid = util.getChatId(user, userStore.userinfo._id);
-    // 只需要当前用户，和target的聊天信息
-    let chatmsgs = chatStore.chatmsg.filter(el => el.chatid == chatid);
+    l(1);
     return (
       <Fragment>
         <div className={classes.root}>
@@ -213,13 +240,7 @@ class Chat extends Component {
               </Typography>
             </Toolbar>
           </AppBar>
-          <List>
-            {chatmsgs.map((el, i) => (
-              <ListItem key={i} dense button className={classes.item}>
-                <MyList>{{ ...el }}</MyList>
-              </ListItem>
-            ))}
-          </List>
+          <MsgList />
           <SendModule onChange={this.handleChange} onSend={this.handleSend} />
         </div>
       </Fragment>

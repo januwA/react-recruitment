@@ -21,7 +21,7 @@ const styles = theme => ({
     margin: theme.spacing.unit / 4
   }
 });
-const userid = sessionStorage.getItem("_id");
+
 const ListItemTextSecondary = ({ content, time }) => (
   <Grid container justify="space-between" component="span">
     <Grid item component="span">
@@ -40,6 +40,7 @@ class Msg extends Component {
     const { classes } = this.props;
     // 更具 chatid 来分组
     // 只显示发给我的消息，过滤掉别人的消息
+    const userid = sessionStorage.getItem("_id");
     const msgGroup = {};
     for (let el of chatStore.chatmsg) {
       if (el.to !== userid) continue;

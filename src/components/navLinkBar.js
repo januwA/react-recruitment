@@ -6,10 +6,7 @@ import {
   Badge
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import { pink } from "@material-ui/core/colors";
 import { withRouter } from "react-router-dom";
-import PropTypes from "prop-types";
-import Logo from "../assets/logo.jpg";
 import { observer } from "mobx-react";
 import chatStore from "../store/chat.store";
 
@@ -21,7 +18,7 @@ const styles = theme => ({
 });
 
 const BadgeIcon = ({ show, count, icon }) =>
-  count && show ? (
+  count > 0 && show? (
     <Badge color="secondary" badgeContent={count}>
       <Icon>{icon}</Icon>{" "}
     </Badge>
@@ -38,7 +35,6 @@ class NavLinkBar extends Component {
   };
   render() {
     const { value } = this.state;
-    const { classes } = this.props;
     // 需要不隐藏的数据
     const navList = this.props.data.filter($_ => !$_.hide || $_.hide === false);
     return (
@@ -47,19 +43,14 @@ class NavLinkBar extends Component {
           value={value}
           onChange={this.handleChange}
           showLabels
-          className="fixed-footer">
+          className="fixed-footer"
+        >
           {navList.map($_ => (
             <BottomNavigationAction
               value={$_.path}
               key={$_.path}
               label={$_.text}
-              icon={
-                <BadgeIcon
-                  show={$_.path == "/msg"}
-                  count={chatStore.unread}
-                  icon={$_.icon}
-                />
-              }
+              icon={<BadgeIcon show={ $_.path === '/msg' } count={chatStore.unread} icon={$_.icon} />}
             />
           ))}
         </BottomNavigation>
@@ -71,7 +62,4 @@ class NavLinkBar extends Component {
     this.props.history.push(value);
   };
 }
-NavLinkBar.propTypes = {
-  data: PropTypes.array.isRequired
-};
 export default NavLinkBar;

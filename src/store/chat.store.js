@@ -1,13 +1,21 @@
-import { observable, action, computed, toJS } from "mobx";
+import { observable, action, computed, toJS, set } from "mobx";
 import axios from "axios";
 import io from "socket.io-client";
 import userStore from "../store/user.store";
 import Cookies from "js-cookie";
 import * as _ from "lodash";
-
-const socket = io("ws://localhost:5000");
+let url = "";
+if (process.env.NODE_ENV !== "production") {
+  url = "ws://localhost:5000";
+} else {
+  url = "ws://react.recruitment.ajanuw.fun:5000";
+}
+const socket = io(url);
 const l = console.log;
 class ChatStore {
+  @observable
+  only = true;
+
   @observable
   text = "";
 
@@ -39,12 +47,14 @@ class ChatStore {
     let r = await axios.get("/user/getMsgList");
     if (r.code == 0) {
       // 更新列表和未读消息
-      this.chatmsg = r.data.msgs;
-      this.users = r.data.users;
-      // 展示的未读消息数量，需要是未读状态&接收者是自己的消息
-      this.unread = r.data.msgs.filter(
-        el => !el.read && el.to == sessionStorage.getItem("_id")
-      ).length;
+      set(this, {
+        chatmsg: r.data.msgs,
+        users: r.data.users,
+        // 展示的未读消息数量，需要是未读状态&接收者是自己的消息
+        unread: r.data.msgs.filter(
+          el => el.read == false && el.to == sessionStorage.getItem("_id")
+        ).length
+      });
     }
   };
 
@@ -53,6 +63,7 @@ class ChatStore {
    */
   @action.bound
   msgRecv = e => {
+    this.only = false;
     socket.on("resmsg", data => {
       this.chatmsg.push(data);
       // 在每次發送消息也需要过滤

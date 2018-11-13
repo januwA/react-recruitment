@@ -26,7 +26,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply((req, res, next) => {
-        console.log(req.url);
         if (req.url.startsWith('/user/') || req.url.startsWith('/static/')) {
           return next();
         } else {

@@ -19,51 +19,51 @@ const styles = theme => ({
     textAlign: "center"
   }
 });
-const userinfo = userStore.userinfo;
-const navList = [
-  {
-    path: "/enterprise",
-    text: "求职者",
-    icon: "group",
-    title: "求职者列表",
-    component: Enterprise,
-    hide: userinfo.type == "jobSeeker"
-  },
-  {
-    path: "/jobSeeker",
-    text: "企业",
-    icon: "domain",
-    title: "企业列表",
-    component: JobSeeker,
-    hide: userinfo.type == "enterprise"
-  },
-  {
-    path: "/msg", // 求职者需要查看企业列表
-    text: "消息",
-    icon: "message",
-    title: "消息列表",
-    component: Msg
-  },
-  {
-    path: "/mine", // 求职者需要查看企业列表
-    text: "我的",
-    icon: "person",
-    title: "个人中心",
-    component: Mine
-  }
-];
 
 @withStyles(styles)
 @observer
 class Dashboard extends Component {
   componentWillMount() {
     // 避免多次调用 socket监听
-    if (!chatStore.chatmsg.length) {
+    if (!chatStore.chatmsg.length && chatStore.only) {
       chatStore.getMsgList(userStore.userinfo._id); // 获取msg列表
       chatStore.msgRecv(); // 监听每次socket的返回数据
     }
   }
   render() {
+    const userinfo = userStore.userinfo;
+    const navList = [
+      {
+        path: "/enterprise",
+        text: "求职者",
+        icon: "group",
+        title: "求职者列表",
+        component: Enterprise,
+        hide: userinfo.type == "jobSeeker"
+      },
+      {
+        path: "/jobSeeker",
+        text: "企业",
+        icon: "domain",
+        title: "企业列表",
+        component: JobSeeker,
+        hide: userinfo.type == "enterprise"
+      },
+      {
+        path: "/msg", // 求职者需要查看企业列表
+        text: "消息",
+        icon: "message",
+        title: "消息列表",
+        component: Msg
+      },
+      {
+        path: "/mine", // 求职者需要查看企业列表
+        text: "我的",
+        icon: "person",
+        title: "个人中心",
+        component: Mine
+      }
+    ];
     //  企业登陆后查看求职者列表，求职者登陆后查看企业列表
     const { classes: cs } = this.props;
     const { pathname } = this.props.location;
@@ -96,7 +96,7 @@ class Dashboard extends Component {
         <NavLinkBar data={navList} />
       </Fragment>
     ) : (
-      <Redirect to="/login" exact/>
+      <Redirect to="/login" exact />
     );
   }
 }

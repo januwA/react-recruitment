@@ -29,31 +29,21 @@ class UserStore {
    */
   @action.bound
   async regisger({ user, pwd, repeatpwd, type }) {
-    if (!user || !pwd || !type) {
-      this.errMsg = "请户名密码必须输入";
-      return;
-    }
-    if (pwd !== repeatpwd) {
-      this.errMsg = "两次密码输入不一样";
-      return;
-    }
-    let r;
-    try {
-      r = await axios.post(api.userRegister, { user, pwd, type });
-      l(r);
-      if (r.code === 0) {
-        // 注册成功
-        set(this, {
-          errMsg: "",
-          isAuth: true,
-          redirectTo: getRedirectPath({ type }),
-          userinfo: r.data
-        });
-      } else {
-        this._error(r.msg);
-      }
-    } catch (error) {
-      this._error(String(error));
+    if (!user || !pwd || !type) return (this.errMsg = "请户名密码必须输入");
+    if (pwd !== repeatpwd) return (this.errMsg = "两次密码输入不一样");
+    let r = await axios.post(api.userRegister, { user, pwd, type });
+    l(r);
+    if (r.code === 0) {
+      // 注册成功
+      set(this, {
+        errMsg: "",
+        isAuth: true,
+        redirectTo: getRedirectPath({ type }),
+        userinfo: r.data
+      });
+      sessionStorage.setItem("_id", r.data._id);
+    } else {
+      this._error(r.msg);
     }
   }
 
@@ -64,24 +54,19 @@ class UserStore {
   login = ({ user, pwd }) => async e => {
     user = user.trim();
     pwd = pwd.trim();
-    if (user === "" || pwd === "") {
+    if (user === "" || pwd === "")
       return (this.errMsg = "请输入账号或者密码！");
-    }
-    try {
-      let r = await axios.post(api.userLogin, { user, pwd });
-      // l(r)
-      if (r.code === 0) {
-        // 登陆成功
-        this.errMsg = "";
-        this.isAuth = true;
-        this.redirectTo = getRedirectPath(r.data);
-        this.userinfo = r.data;
-        sessionStorage.setItem('_id', this.userinfo._id);
-      } else {
-        this._error(r.msg);
-      }
-    } catch (error) {
-      this._error(String(error));
+
+    let r = await axios.post(api.userLogin, { user, pwd });
+    if (r.code === 0) {
+      // 登陆成功
+      this.errMsg = "";
+      this.isAuth = true;
+      this.redirectTo = getRedirectPath(r.data);
+      this.userinfo = r.data;
+      sessionStorage.setItem("_id", r.data._id);
+    } else {
+      this._error(r.msg);
     }
   };
 

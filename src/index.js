@@ -10,6 +10,9 @@ import "./index.css";
 
 // 自定义主题
 const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   palette: {
     primary: blue,
     secondary: pink

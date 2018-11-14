@@ -22,16 +22,22 @@ const styles = theme => ({
   }
 });
 
-const ListItemTextSecondary = ({ content, time }) => (
-  <Grid container justify="space-between" component="span">
-    <Grid item component="span">
-      {content}
-    </Grid>
-    <Grid item component="span">
-      {time}
-    </Grid>
-  </Grid>
-);
+@observer
+class ListItemTextSecondary extends Component {
+  render() {
+    const { content, time } = this.props;
+    return (
+      <Grid container justify="space-between" component="span">
+        <Grid item component="span">
+          {content}
+        </Grid>
+        <Grid item component="span">
+          {time}
+        </Grid>
+      </Grid>
+    );
+  }
+}
 
 @withStyles(styles)
 @observer
@@ -54,55 +60,53 @@ class Msg extends Component {
       const bLast = _.last(b).create_time;
       return bLast - aLast;
     });
-    return (
-      <Fragment>
-        <List>
-          {msgList.map(el => {
-            // 展示最新的一条消息
-            const lastMsg = _.last(el);
-            // 信息发送着是自己的话就取接收者的信息，否则相反
-            let targetId = lastMsg.from == userid ? lastMsg.to : lastMsg.from;
-            const time = dayjs(lastMsg.create_time).format(
-              "YYYY-MM-DD HH:mm:ss"
-            );
-            const info = chatStore.users[targetId];
-            const unreadNum = el.filter(v => !v.read && v.to == userid).length;
-            return (
-              !!info && (
-                <Fragment key={lastMsg._id}>
-                  <ListItem
-                    button
-                    onClick={() => this.props.history.push(`/chat/${targetId}`)}
+    l(msgList);
+    return msgList.length ? (
+      <List>
+        {msgList.map(el => {
+          // 展示最新的一条消息
+          const lastMsg = _.last(el);
+          l(lastMsg);
+          // 信息发送着是自己的话就取接收者的信息，否则相反
+          let targetId = lastMsg.from == userid ? lastMsg.to : lastMsg.from;
+          const time = dayjs(lastMsg.create_time).format("YYYY-MM-DD HH:mm:ss");
+          const info = chatStore.users[targetId];
+          l(info);
+          const unreadNum = el.filter(v => !v.read && v.to == userid).length;
+          l(unreadNum);
+          return !!info ? (
+            <Fragment key={lastMsg._id}>
+              <ListItem
+                button
+                onClick={() => this.props.history.push(`/chat/${targetId}`)}
+              >
+                {!!unreadNum ? (
+                  <Badge
+                    classes={{ badge: classes.margin }}
+                    badgeContent={unreadNum}
+                    color="secondary"
                   >
-                    {!!unreadNum ? (
-                      <Badge
-                        classes={{ badge: classes.margin }}
-                        badgeContent={unreadNum}
-                        color="secondary"
-                      >
-                        <Avatar src={info.avatar} width="25" height="25" />
-                      </Badge>
-                    ) : (
-                      <Avatar src={info.avatar} width="25" height="25" />
-                    )}
-                    <ListItemText
-                      primary={info.name}
-                      secondary={
-                        <ListItemTextSecondary
-                          content={lastMsg.content}
-                          time={time}
-                        />
-                      }
+                    <Avatar src={info.avatar} width="25" height="25" />
+                  </Badge>
+                ) : (
+                  <Avatar src={info.avatar} width="25" height="25" />
+                )}
+                <ListItemText
+                  primary={info.name}
+                  secondary={
+                    <ListItemTextSecondary
+                      content={lastMsg.content}
+                      time={time}
                     />
-                  </ListItem>
-                  <Divider inset component="li" />
-                </Fragment>
-              )
-            );
-          })}
-        </List>
-      </Fragment>
-    );
+                  }
+                />
+              </ListItem>
+              <Divider inset component="li" />
+            </Fragment>
+          ) : null;
+        })}
+      </List>
+    ) : null;
   }
 }
 

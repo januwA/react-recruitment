@@ -25,9 +25,11 @@ const styles = theme => ({
 class Dashboard extends Component {
   componentWillMount() {
     // 避免多次调用 socket监听
-    if (!chatStore.chatmsg.length && chatStore.only) {
+    if (!chatStore.chatmsg.length) {
       chatStore.getMsgList(userStore.userinfo._id); // 获取msg列表
-      chatStore.msgRecv(); // 监听每次socket的返回数据
+      if (chatStore.only) {
+        chatStore.msgRecv(); // 监听每次socket的返回数据
+      }
     }
   }
   render() {
@@ -73,8 +75,7 @@ class Dashboard extends Component {
         <AppBar position="fixed" color="primary">
           <Toolbar>
             <Typography
-              variant="title"
-              color="inherit"
+              variant='h6'
               className={cs.flexGrow1}
             >
               {el.title}

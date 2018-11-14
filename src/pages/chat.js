@@ -198,9 +198,11 @@ class Chat extends Component {
     // 避免在刷新页面时没有数据
     // chatStore.only  避免在两次 length等于0在调用多次 socket监听事件
     // if (!chatStore.chatmsg.length) {
-    if (!chatStore.chatmsg.length && chatStore.only) {
+    if (!chatStore.chatmsg.length) {
       chatStore.getMsgList(userStore.userinfo._id); // 获取msg列表
-      chatStore.msgRecv(); // 监听每次socket的返回数据
+      if (chatStore.only) {
+        chatStore.msgRecv(); // 监听每次socket的返回数据
+      }
     }
   }
 
@@ -220,30 +222,28 @@ class Chat extends Component {
     if (!chatStore.users[user]) return null;
     l(1);
     return (
-      <Fragment>
-        <div className={classes.root}>
-          <AppBar position="fixed" style={{ height: "8vh" }}>
-            <Toolbar>
-              <IconButton
-                className={classes.menuButton}
-                color="inherit"
-                onClick={this.handleBack}
-              >
-                <Icon>chevron_left</Icon>
-              </IconButton>
-              <Typography
-                variant="title"
-                color="inherit"
-                className={classes.grow}
-              >
-                {chatStore.users[user].name}
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <MsgList />
-          <SendModule onChange={this.handleChange} onSend={this.handleSend} />
-        </div>
-      </Fragment>
+      <div className={classes.root}>
+        <AppBar position="fixed" style={{ height: "8vh" }}>
+          <Toolbar>
+            <IconButton
+              className={classes.menuButton}
+              color="inherit"
+              onClick={this.handleBack}
+            >
+              <Icon>chevron_left</Icon>
+            </IconButton>
+            <Typography
+              variant="h6"
+              color="inherit"
+              className={classes.grow}
+            >
+              {chatStore.users[user].name}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <MsgList />
+        <SendModule onChange={this.handleChange} onSend={this.handleSend} />
+      </div>
     );
   }
 }

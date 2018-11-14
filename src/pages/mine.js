@@ -83,7 +83,7 @@ class Mine extends Component {
               justify="center"
               direction="column"
               className={classes.title}>
-              <Typography variant="headline" gutterBottom align="center">
+              <Typography variant="subtitle1" gutterBottom align="center">
                 {userStore.userinfo.user}
               </Typography>
               {userStore.userinfo.company && (

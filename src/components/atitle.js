@@ -23,8 +23,6 @@ class ATitle extends Component {
         <AppBar position="fixed" color="primary">
           <Toolbar>
             <Typography
-              variant="title"
-              color="inherit"
               className={cs.flexGrow1}>
               {children}
             </Typography>
